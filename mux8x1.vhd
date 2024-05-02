@@ -1,5 +1,6 @@
 library ieee;
 use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
 entity mux8x1 is
     port(
@@ -18,5 +19,6 @@ architecture a_mux8x1 of mux8x1 is
                     i4 when sel = "100" else
                     i5 when sel = "101" else
                     i6 when sel = "110" else
-                    i7;
+                    i7 when sel = "111" else
+                    "0000000000000000";
 end architecture a_mux8x1;

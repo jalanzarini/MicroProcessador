@@ -38,7 +38,6 @@ architecture a_reg16bits_tb of reg16bits_tb is
         sim_time_proc : process
         begin
             wait for 10 us;
-            finished <= '1';
             wait;
         end process sim_time_proc;
 

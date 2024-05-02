@@ -16,7 +16,7 @@ architecture a_reg16bits of reg16bits is
 begin
     process(clk,rst,wr_en)
     begin
-        if rst = '1' then
+        if rising_edge(rst) then
             registro <= "0000000000000000";
         elsif wr_en = '1' then
             if rising_edge(clk) then

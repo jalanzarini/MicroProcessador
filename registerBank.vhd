@@ -53,7 +53,7 @@ architecture a_registerBank of registerBank is
     signal data_out0, data_out1, data_out2, data_out3, data_out4, data_out5, data_out6, data_out7 : unsigned(15 downto 0);
 
     begin
-        reg0 : reg16bits port map(clk => clk, rst => rst, wr_en => wr_en0, data_in => WriteData, data_out => data_out0);
+        reg0 : reg16bits port map (clk => clk, rst => rst, wr_en => wr_en0, data_in => WriteData); -- não tem saida
         reg1 : reg16bits port map (clk => clk, rst => rst, wr_en => wr_en1, data_in => WriteData, data_out => data_out1);
         reg2 : reg16bits port map (clk => clk, rst => rst, wr_en => wr_en2, data_in => WriteData, data_out => data_out2);
         reg3 : reg16bits port map (clk => clk, rst => rst, wr_en => wr_en3, data_in => WriteData, data_out => data_out3);
@@ -64,4 +64,5 @@ architecture a_registerBank of registerBank is
         demux : wr_en_demux port map(sel => WriteReg, data_in => WriteEnable, out0 => wr_en0, out1 => wr_en1, out2 => wr_en2, out3 => wr_en3, out4 => wr_en4, out5 => wr_en5, out6 => wr_en6, out7 => wr_en7);
         mux1 : mux8x1 port map(i0 => data_out0, i1 => data_out1, i2 => data_out2, i3 => data_out3, i4 => data_out4, i5 => data_out5, i6 => data_out6, i7 => data_out7, sel => ReadReg1, data_out => ReadData1);
         mux2 : mux8x1 port map(i0 => data_out0, i1 => data_out1, i2 => data_out2, i3 => data_out3, i4 => data_out4, i5 => data_out5, i6 => data_out6, i7 => data_out7, sel => ReadReg2, data_out => ReadData2);
+        data_out0 <= "0000000000000000";
     end architecture;
