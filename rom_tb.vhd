@@ -10,14 +10,14 @@ architecture a_rom_tb of rom_tb is
         port(
             clk : in std_logic;
             addr : in unsigned(6 downto 0);
-            data : out unsigned(11 downto 0)
+            data : out unsigned(15 downto 0)
         );
     end component rom;
 
     constant period_time : time := 100 ns;
     signal finished : std_logic := '0';
     signal clk : std_logic;
-    signal data : unsigned(11 downto 0);
+    signal data : unsigned(15 downto 0);
     signal addr : unsigned(6 downto 0);
 
     begin
@@ -30,6 +30,7 @@ architecture a_rom_tb of rom_tb is
         sim_time_proc : process
         begin
             wait for 10 us;
+            finished <= '1';
             wait;
         end process sim_time_proc;
 
@@ -61,6 +62,22 @@ architecture a_rom_tb of rom_tb is
             addr <= "0000110";
             wait for 100 ns;
             addr <= "0000111";
+            wait for 100 ns;
+            addr <= "0001000";
+            wait for 100 ns;
+            addr <= "0001001";
+            wait for 100 ns;
+            addr <= "0001010";
+            wait for 100 ns;
+            addr <= "0001011";
+            wait for 100 ns;
+            addr <= "0001100";
+            wait for 100 ns;
+            addr <= "0001101";
+            wait for 100 ns;
+            addr <= "0001110";
+            wait for 100 ns;
+            addr <= "0001111";
             wait;
         end process;
     end architecture a_rom_tb;
