@@ -10,11 +10,11 @@ entity oneStateMachine is
 end entity;
 
 architecture a_oneStateMachine of oneStateMachine is
-    signal estado : std_logic;
+    signal estado : std_logic := '0';
 begin
     process(clk,rst)
     begin
-        if rising_edge(rst) then
+        if rst = '1' then
             estado <= '0';
         elsif rising_edge(clk) then
             estado <= not estado;

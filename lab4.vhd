@@ -14,8 +14,11 @@ entity lab4 is
 architecture a_lab4 of lab4 is
     component controlUnity is
         port(
+            jump_en : out std_logic;
+            instruction : in unsigned(15 downto 0);
             data_in_uc : in unsigned(6 downto 0);
-            data_out_uc : out unsigned(6 downto 0)
+            data_out_uc : out unsigned(6 downto 0);
+            clk, rst : in std_logic
         );
     end component controlUnity;
 
@@ -39,12 +42,19 @@ architecture a_lab4 of lab4 is
 
     signal data_out_pc                      : unsigned(6 downto 0);
     signal data_out_controlUnity            : unsigned(6 downto 0);
-    
+    signal jump_en                          : std_logic;
+    signal instruction                      : unsigned(15 downto 0);
+    signal UC_or_instruction                : unsigned(6 downto 0);
+
     begin
         UC : controlUnity 
             port map(
+                instruction => instruction,
+                jump_en => jump_en,
                 data_in_uc => data_out_pc,
-                data_out_uc => data_out_controlUnity
+                data_out_uc => data_out_controlUnity,
+                clk => clk,
+                rst => rst
             );
 
         PC : programCounter
@@ -52,7 +62,7 @@ architecture a_lab4 of lab4 is
                 clk => clk,
                 rst => rst,
                 wr_en => wr_en,
-                data_in_pc => data_out_controlUnity,
+                data_in_pc => UC_or_instruction,
                 data_out_pc => data_out_pc
             );
 
@@ -60,7 +70,9 @@ architecture a_lab4 of lab4 is
             port map(
                 clk => clk,
                 addr => data_out_pc,
-                data => data_out
+                data => instruction
             );
-        
+
+        UC_or_instruction <= ("000" & instruction(11 downto 8)) when jump_en = '1' else data_out_controlUnity;
+        data_out <= instruction;
     end a_lab4;
