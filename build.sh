@@ -21,7 +21,7 @@ ghdl -e mux8x1
 ghdl -e reg16bits
 ghdl -e wr_en_demux
 
-ghdl -e oneStateMachine
+ghdl -e stateMachine
 ghdl -e controlUnit
 ghdl -e programCounter
 ghdl -e rom
