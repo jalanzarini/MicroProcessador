@@ -1,0 +1,14 @@
+MSB                         LSB
+
+ADD:    0000 xxx sss xxxx
+ADDI:   0100 xxx sss cccc
+SUB:    0001 xxx sss xxxx
+CMP:    0010 sss fff xxxx
+JMP:    0110 sss fff cccc
+JMPI:   1000 xxx xxx cccc
+
+onde: 
+        x - irrelevante
+        s - fonte 1
+        f - fonte 2
+        c - constante
