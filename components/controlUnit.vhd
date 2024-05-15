@@ -4,12 +4,17 @@ use ieee.numeric_std.all;
 
 entity controlUnit is
     port(
-        clk, rst : in std_logic;
+        clk, rst, zero : in std_logic;
         instruction : in unsigned(15 downto 0);
+        addr : in unsigned(6 downto 0);
+        immediate : out unsigned(15 downto 0);
         jump_en : out std_logic;
-        data_in_uc : in unsigned(6 downto 0);
-        data_out_uc : out unsigned(6 downto 0);
-        op_ula : out unsigned(1 downto 0)
+        next_addr : out unsigned(6 downto 0);
+        op_ula : out unsigned(1 downto 0);
+        write_en : out std_logic;
+        readReg1, readReg2 : out unsigned(2 downto 0);
+        writeReg : out unsigned(2 downto 0);
+        imm_op : out std_logic
     );
 end entity controlUnit;
 
@@ -21,19 +26,86 @@ architecture a_controlUnit of controlUnit is
         );
      end component;
     
-    signal data_out_sm : unsigned(1 downto 0);
-    signal opcode : unsigned(3 downto 0);
+    signal state : unsigned(1 downto 0);
+    signal opcode : unsigned(4 downto 0);
 
     begin
-        uut : StateMachine port map(clk => clk, rst => rst, state => data_out_sm);
+        uut : StateMachine port map(clk => clk, rst => rst, state => state);
 
-        opcode <= instruction(15 downto 12);
+        opcode <= instruction(15 downto 11);
+        immediate <= "00000000000" & instruction(4 downto 0) when instruction(4) = '0' else "11111111111" & instruction(4 downto 0) when instruction(4) = '1' else (others => '0');
 
-        jump_en <= '1' when opcode = ("0110" or "1000") else
-                   '0';
+        imm_op <= '1' when opcode = "00010" or opcode = "00100" or opcode = "00111" or opcode = "01000" else '0';
+
+        jump_en <= '1' when (opcode = "00111" and zero = '1') or opcode = "01000" else '0';
+
+        next_addr <= addr + 1 when state = "01" and zero = '0' else
+                       addr when state = "00" and zero = '0' else
+                       immediate(6 downto 0) when state = "01" and zero = '1' and opcode = "01000" else
+                       addr + immediate(6 downto 0) when state = "01" and zero = '1' and opcode = "00111" else
+                       addr;
         
-        data_out_uc <= data_in_uc + 1 when data_out_sm = "01" else
-                       data_in_uc when data_out_sm = "00" else
-                       (others => '0');
+    process(opcode)
+    begin
+        case opcode is
+            when "00000" =>
+                op_ula <= "11";
+                write_en <= '0';
+                readReg1 <= "000";
+                readReg2 <= "000";
+                writeReg <= "000";
+            when "00001" =>
+                op_ula <= "11";
+                write_en <= '1';
+                readReg1 <= instruction(7 downto 5);
+                readReg2 <= "000";
+                writeReg <= instruction(10 downto 8);
+            when "00010" =>
+                op_ula <= "11";
+                write_en <= '1';
+                readReg1 <= "000";
+                readReg2 <= "000";
+                writeReg <= instruction(10 downto 8);
+            when "00011" =>
+                op_ula <= "00";
+                write_en <= '1';
+                readReg1 <= instruction(7 downto 5);
+                readReg2 <= "000";
+                writeReg <= "000";
+            when "00100" =>
+                op_ula <= "11";
+                write_en <= '1';
+                readReg1 <= "000";
+                readReg2 <= "000";
+                writeReg <= "000";
+            when "00101" =>
+                op_ula <= "01";
+                write_en <= '1';
+                readReg1 <= instruction(7 downto 5);
+                readReg2 <= "000";
+                writeReg <= "000";
+            when "00110" =>
+                op_ula <= "10";
+                write_en <= '0';
+                readReg1 <= instruction(7 downto 5);
+                readReg2 <= "000";
+                writeReg <= "000";
+            when "00111" =>
+                op_ula <= "01";
+                write_en <= '0';
+                readReg1 <= instruction(7 downto 5);
+                readReg2 <= "000";
+                writeReg <= "000";
+            when "01000" =>
+                op_ula <= "11";
+                write_en <= '0';
 
+            when others =>
+                op_ula <= "00";
+                write_en <= '0';
+                readReg1 <= "000";
+                readReg2 <= "000";
+                writeReg <= "000";
+        end case;
+    end process;
 end architecture a_controlUnit;

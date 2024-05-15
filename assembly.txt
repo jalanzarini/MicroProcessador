@@ -1,0 +1,15 @@
+A:  LI R3,5
+B:  LI R4,8
+C:  MOV A,R3
+    ADD A,R4
+    MOV R5,A
+D:  LI R1,1
+    SUB A,R1
+    MOV R5,A
+E:  JMPI 20
+F:  ADDI A,0
+    MOV R5,A
+G:  MOV R3,A
+H:  JMPI 3
+I:  ADDI A,0
+    MOV R3,A

@@ -16,8 +16,7 @@ architecture ula_arch of ula is
         saida <= x + y when op = "00" else
                  x - y when op = "01" else
                  x = y when op = "10" else
-                  x or y when op = "11" else
-                 "0000000000000000";
+                 y when op = "11";
 
         negative <= saida(15);
         zero <= saida = "0000000000000000";
