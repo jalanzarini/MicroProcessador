@@ -12,13 +12,17 @@ entity ula is
 end entity ula;
 
 architecture ula_arch of ula is
+    signal result : unsigned(15 downto 0);
+
     begin
-        saida <= x + y when op = "00" else
+        result <= x + y when op = "00" else
                  x - y when op = "01" else
-                 x = y when op = "10" else
+                 x * y when op = "10" else
                  y when op = "11";
 
-        negative <= saida(15);
-        zero <= saida = "0000000000000000";
-        carry <= (x(15) and y(15)) or (x(15) and not saida(15)) or (y(15) and not saida(15)) when op = "00" else '0';
+        negative <= result(15);
+        zero <= '1' when result = "0000000000000000" and op = "01" else '0';
+        carry <= (x(15) and y(15)) or (x(15) and not result(15)) or (y(15) and not result(15)) when op = "00" else '0';
+        saida <= result;
+      
 end architecture ula_arch; 

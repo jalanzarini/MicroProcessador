@@ -14,7 +14,8 @@ entity controlUnit is
         write_en : out std_logic;
         readReg1, readReg2 : out unsigned(2 downto 0);
         writeReg : out unsigned(2 downto 0);
-        imm_op : out std_logic
+        imm_op : out std_logic;
+        state_out : out unsigned(1 downto 0)
     );
 end entity controlUnit;
 
@@ -26,25 +27,29 @@ architecture a_controlUnit of controlUnit is
         );
      end component;
     
-    signal state : unsigned(1 downto 0);
-    signal opcode : unsigned(4 downto 0);
+    signal state : unsigned(1 downto 0) := "00";
+    signal opcode : unsigned(4 downto 0) := "00000";
+    signal imm : unsigned(15 downto 0) := "0000000000000000";
+    signal jump_enable : std_logic := '0';
 
     begin
         uut : StateMachine port map(clk => clk, rst => rst, state => state);
 
         opcode <= instruction(15 downto 11);
-        immediate <= "00000000000" & instruction(4 downto 0) when instruction(4) = '0' else "11111111111" & instruction(4 downto 0) when instruction(4) = '1' else (others => '0');
-
+        imm <= "00000000000" & instruction(4 downto 0) when instruction(4) = '0' else "11111111111" & instruction(4 downto 0) when instruction(4) = '1' else (others => '0');
+        immediate <= imm;
         imm_op <= '1' when opcode = "00010" or opcode = "00100" or opcode = "00111" or opcode = "01000" else '0';
 
-        jump_en <= '1' when (opcode = "00111" and zero = '1') or opcode = "01000" else '0';
+        jump_enable <= '1' when (opcode = "00111" and zero = '1') or opcode = "01000" else '0';
+        jump_en <= jump_enable;
 
-        next_addr <= addr + 1 when state = "01" and zero = '0' else
-                       addr when state = "00" and zero = '0' else
-                       immediate(6 downto 0) when state = "01" and zero = '1' and opcode = "01000" else
-                       addr + immediate(6 downto 0) when state = "01" and zero = '1' and opcode = "00111" else
+        next_addr <= addr + 1 when state = "01" and jump_enable = '0' else
+                       addr when state = "00" and jump_enable = '0' else
+                       imm(6 downto 0) when state = "01" and jump_enable = '1' and opcode = "01000" else
+                       addr + imm(6 downto 0) when state = "01" and jump_enable = '1' and opcode = "00111" else
                        addr;
         
+        state_out <= state;
     process(opcode)
     begin
         case opcode is
@@ -85,7 +90,7 @@ architecture a_controlUnit of controlUnit is
                 readReg2 <= "000";
                 writeReg <= "000";
             when "00110" =>
-                op_ula <= "10";
+                op_ula <= "01";
                 write_en <= '0';
                 readReg1 <= instruction(7 downto 5);
                 readReg2 <= "000";
