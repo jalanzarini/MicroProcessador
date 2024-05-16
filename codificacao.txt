@@ -1,14 +1,20 @@
-MSB                         LSB
-
-ADD:    0000 xxx sss xxxx
-ADDI:   0100 xxx sss cccc
-SUB:    0001 xxx sss xxxx
-CMP:    0010 sss fff xxxx
-JMP:    0110 sss fff cccc
-JMPI:   1000 xxx xxx cccc
+       MSB               LSB
+        |                 |
+NOP:    00000 000 000 00000
+MOV:    00001 ddd sss xxxmn
+LI:     00010 ddd xxx ccccc
+ADD:    00011 aaa sss xxxxx
+ADDI:   00100 aaa xxx ccccc
+SUB:    00101 aaa sss xxxxx
+CMP:    00110 aaa sss xxxxx
+JMP:    00111 aaa sss ccccc
+JMPI:   01000 xxx xxx ccccc
 
 onde: 
+        a - acumulador
         x - irrelevante
-        s - fonte 1
-        f - fonte 2
+        s - fonte
         c - constante
+        d - destino
+        m - acumulador destino
+        n - acumulador fonte
