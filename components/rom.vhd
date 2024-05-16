@@ -11,6 +11,7 @@ entity rom is
 end entity rom;
 
 architecture a_rom of rom is
+    signal iniciado : boolean := false;
 
     type mem is array (0 to 127) of unsigned(15 downto 0);
     constant conteudo_rom : mem :=(
@@ -46,7 +47,10 @@ architecture a_rom of rom is
 begin
     process(clk)
     begin
-        if rising_edge(clk) then
+        if not iniciado then
+            data <= "0000000000000000";
+            iniciado <= true;
+        elsif rising_edge(clk) then
             data <= conteudo_rom(to_integer(addr));
         end if;
     end process;

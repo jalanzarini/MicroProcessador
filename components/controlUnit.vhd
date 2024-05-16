@@ -36,7 +36,10 @@ architecture a_controlUnit of controlUnit is
         uut : StateMachine port map(clk => clk, rst => rst, state => state);
 
         opcode <= instruction(15 downto 11);
-        imm <= "00000000000" & instruction(4 downto 0) when instruction(4) = '0' else "11111111111" & instruction(4 downto 0) when instruction(4) = '1' else (others => '0');
+        imm <=  "00000000000" & instruction(4 downto 0) when instruction(4) = '0' and opcode = "00111" else
+                "11111111111" & instruction(4 downto 0) when instruction(4) = '1' and opcode = "00111" else 
+                "00000000000" & instruction(4 downto 0) when opcode = "01000" else
+                (others => '0');
         immediate <= imm;
         imm_op <= '1' when opcode = "00010" or opcode = "00100" or opcode = "00111" or opcode = "01000" else '0';
 

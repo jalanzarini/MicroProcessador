@@ -1,0 +1,39 @@
+[*]
+[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
+[*] Thu May 16 00:27:43 2024
+[*]
+[dumpfile] "/home/errera/utfpr/arqComp/microProcessador/waves/processador_tb.ghw"
+[dumpfile_mtime] "Thu May 16 00:26:59 2024"
+[dumpfile_size] 9401
+[savefile] "/home/errera/utfpr/arqComp/microProcessador/waves/processador_tb.gtkw"
+[timestart] 0
+[size] 1920 1080
+[pos] -961 -38
+*-25.471746 50200000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] top.
+[treeopen] top.tb.
+[sst_width] 59
+[signals_width] 200
+[sst_expanded] 0
+[sst_vpaned_height] 294
+@28
+top.tb.finished
+top.tb.rst
+top.tb.clk
+top.tb.uut.imm_op
+top.tb.uut.wr_en
+top.tb.uut.jump_en
+top.tb.uut.zero
+@22
+#{top.tb.acu_output[15:0]} top.tb.acu_output[15] top.tb.acu_output[14] top.tb.acu_output[13] top.tb.acu_output[12] top.tb.acu_output[11] top.tb.acu_output[10] top.tb.acu_output[9] top.tb.acu_output[8] top.tb.acu_output[7] top.tb.acu_output[6] top.tb.acu_output[5] top.tb.acu_output[4] top.tb.acu_output[3] top.tb.acu_output[2] top.tb.acu_output[1] top.tb.acu_output[0]
+#{top.tb.reg2[15:0]} top.tb.reg2[15] top.tb.reg2[14] top.tb.reg2[13] top.tb.reg2[12] top.tb.reg2[11] top.tb.reg2[10] top.tb.reg2[9] top.tb.reg2[8] top.tb.reg2[7] top.tb.reg2[6] top.tb.reg2[5] top.tb.reg2[4] top.tb.reg2[3] top.tb.reg2[2] top.tb.reg2[1] top.tb.reg2[0]
+#{top.tb.reg1[15:0]} top.tb.reg1[15] top.tb.reg1[14] top.tb.reg1[13] top.tb.reg1[12] top.tb.reg1[11] top.tb.reg1[10] top.tb.reg1[9] top.tb.reg1[8] top.tb.reg1[7] top.tb.reg1[6] top.tb.reg1[5] top.tb.reg1[4] top.tb.reg1[3] top.tb.reg1[2] top.tb.reg1[1] top.tb.reg1[0]
+#{top.tb.ula_result[15:0]} top.tb.ula_result[15] top.tb.ula_result[14] top.tb.ula_result[13] top.tb.ula_result[12] top.tb.ula_result[11] top.tb.ula_result[10] top.tb.ula_result[9] top.tb.ula_result[8] top.tb.ula_result[7] top.tb.ula_result[6] top.tb.ula_result[5] top.tb.ula_result[4] top.tb.ula_result[3] top.tb.ula_result[2] top.tb.ula_result[1] top.tb.ula_result[0]
+@23
+#{top.tb.instruction[15:0]} top.tb.instruction[15] top.tb.instruction[14] top.tb.instruction[13] top.tb.instruction[12] top.tb.instruction[11] top.tb.instruction[10] top.tb.instruction[9] top.tb.instruction[8] top.tb.instruction[7] top.tb.instruction[6] top.tb.instruction[5] top.tb.instruction[4] top.tb.instruction[3] top.tb.instruction[2] top.tb.instruction[1] top.tb.instruction[0]
+@22
+#{top.tb.pc[6:0]} top.tb.pc[6] top.tb.pc[5] top.tb.pc[4] top.tb.pc[3] top.tb.pc[2] top.tb.pc[1] top.tb.pc[0]
+@28
+#{top.tb.state_out[1:0]} top.tb.state_out[1] top.tb.state_out[0]
+[pattern_trace] 1
+[pattern_trace] 0
