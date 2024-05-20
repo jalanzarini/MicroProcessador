@@ -4,9 +4,9 @@ use ieee.numeric_std.all;
 
 entity rom is
     port (
-        clk : in std_logic;
-        addr : in unsigned(6 downto 0);
-        data : out unsigned(15 downto 0)
+        clk : in std_logic; -- Clock
+        addr : in unsigned(6 downto 0); -- Endereço de leitura
+        data : out unsigned(15 downto 0) -- Instrução lida
     );
 end entity rom;
 
@@ -48,7 +48,7 @@ begin
     process(clk)
     begin
         if not iniciado then
-            data <= "0000000000000000";
+            data <= conteudo_rom(to_integer(0));
             iniciado <= true;
         elsif rising_edge(clk) then
             data <= conteudo_rom(to_integer(addr));
