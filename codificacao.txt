@@ -1,16 +1,16 @@
        MSB               LSB
-        |                 |
-NOP:    0000 000 0000 00000
-MOV:    0001 sss xxxx xxxxx    
-MOV:    0010 ddd xxxx xxxxx
-LI:     0011 aaa cccc ccccc
-LI:     0100 ddd cccc ccccc
-ADD:    0101 sss xxxx xxxxx
-ADDI:   0110 aaa cccc ccccc
-SUB:    0111 sss xxxx xxxxx
-CMP:    1000 sss xxxx xxxxx
-JMP:    1001 sss xxcc ccccc
-JMPI:   1010 xxx xxcc ccccc
+        |                |
+NOP:    0000 000 000000000
+MOV:    0001 sss xxxxxxxxx    
+MOV:    0010 ddd xxxxxxxxx
+LI:     0011 aaa ccccccccc
+LI:     0100 ddd ccccccccc
+ADD:    0101 sss xxxxxxxxx
+ADDI:   0110 aaa ccccccccc
+SUB:    0111 sss xxxxxxxxx
+CMP:    1000 sss xxxxxxxxx
+JMP:    1001 sss ccccccccc
+JMPI:   1010 xxx ccccccccc
 
 
 onde: 

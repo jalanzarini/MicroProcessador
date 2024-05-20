@@ -12,18 +12,18 @@ architecture arq of tb is
   signal pc: unsigned(6 downto 0);
   signal instruction: unsigned(15 downto 0);
   signal ula_result: unsigned(15 downto 0);
-  signal reg1, reg2: unsigned(15 downto 0);
+  signal reg : unsigned(15 downto 0);
   signal acu_output: unsigned(15 downto 0);
 
   component processador is
     port(
-        clk, rst : in std_logic;
-        state_saida : out unsigned(1 downto 0);
-        pc : out unsigned(6 downto 0);
-        inst : out unsigned(15 downto 0);
-        ula_result : out unsigned(15 downto 0);
-        reg1, reg2 : out unsigned(15 downto 0);
-        acu_output : out unsigned(15 downto 0)
+        clk, rst : in std_logic; --Clock e Reset
+        state_out : out unsigned(1 downto 0); --Estado atual da máquina de estados
+        pc : out unsigned(6 downto 0); -- Endereço atual do Program Counter
+        inst : out unsigned(15 downto 0); -- Instrução atual
+        ula_result : out unsigned(15 downto 0); -- Resultado da operação da ULA
+        reg : out unsigned(15 downto 0); -- Dado lido do banco de registradores
+        acu_output : out unsigned(15 downto 0) -- Saída do acumulador
     );
 end component processador;
 
@@ -33,12 +33,11 @@ begin
         port map(
             clk => clk,
             rst => rst,
-            state_saida => state_out,
+            state_out => state_out,
             pc => pc,
             inst => instruction,
             ula_result => ula_result,
-            reg1 => reg1,
-            reg2 => reg2,
+            reg => reg,
             acu_output => acu_output
         );
 
