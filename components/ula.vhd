@@ -5,9 +5,9 @@ use ieee.numeric_std.all;
 entity ula is
     port(
         x, y : in unsigned(15 downto 0);        -- Entradas da ULA - A entrada y é o acumulador
-        op: in unsigned(1 downto 0)             -- Operação da ULA
+        op: in unsigned(1 downto 0);             -- Operação da ULA
         negative, carry, zero : out std_logic;  -- flags 
-        saida : out unsigned(15 downto 0);      -- Saída da ULA / Entrada do acumulador
+        saida : out unsigned(15 downto 0)      -- Saída da ULA / Entrada do acumulador
     );
 end entity ula;
 
@@ -16,7 +16,7 @@ architecture ula_arch of ula is
 
     begin
         result <= x + y when op = "00" else
-                 x - y when op = "01" else
+                 y - x when op = "01" else
                  x * y when op = "10" else
                  y when op = "11";
 

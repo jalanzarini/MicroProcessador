@@ -7,9 +7,8 @@ entity registerBank is
         clk, rst    : in std_logic;             --Clock / Reset
         WriteData   : in unsigned(15 downto 0); --Data to be written in the selected register
         WriteReg    : in unsigned(2 downto 0);  --Selects the register to write
-        ReadReg     : in unsigned(2 downto 0)   --Selects the 1 register to read
-        ReadData    : out unsigned(15 downto 0);--Data read from the 1 register
-
+        ReadReg     : in unsigned(2 downto 0);   --Selects the 1 register to read
+        ReadData    : out unsigned(15 downto 0)--Data read from the 1 register
     );
 end entity registerBank;
 

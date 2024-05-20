@@ -10,6 +10,6 @@ E:  JMPI 20
 F:  ADDI A,0
     MOV R5,A
 G:  MOV R3,A
-H:  JMPI 3
+H:  JMPI 4
 I:  ADDI A,0
     MOV R3,A
