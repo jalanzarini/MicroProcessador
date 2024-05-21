@@ -71,13 +71,19 @@ architecture a_processador of processador is
             RB_src      : out std_logic;                -- Controle de entrada do banco de registradores
             ula_op      : out unsigned(1 downto 0);     -- Operação da ULA
             acu_src     : out unsigned(1 downto 0);     -- Entrada do acumulador
-            state_out   : out unsigned(1 downto 0);     -- Estado atual do state machine
+            state_in    : in unsigned(1 downto 0);     -- Estado atual do state machine
             wr_reg      : out unsigned(2 downto 0);     -- Registrador de escrita
             read_reg    : out unsigned(2 downto 0);     -- Registrador de leitura
             next_addr   : out unsigned(6 downto 0);     -- Próximo endereço
             ext_imm     : out unsigned(15 downto 0)    -- Immediate extendido 
         );
     end component controlUnit;
+
+    component stateMachine is
+        port( clk,rst: in std_logic;
+              state: out unsigned(1 downto 0)
+        );
+     end component;
 
     signal clk_fetch, clk_decode, clk_exec : std_logic := '0';
     
@@ -119,7 +125,7 @@ architecture a_processador of processador is
         );
 
         control : controlUnit port map(
-            clk => clk,
+            clk => clk_exec,
             rst => rst,
             is_zero => is_zero,
             addr => addr,
@@ -127,7 +133,7 @@ architecture a_processador of processador is
             RB_src => RB_src,
             ula_op => ula_op,
             acu_src => acu_src,
-            state_out => state,
+            state_in => state,
             wr_reg => wr_reg,
             read_reg => read_reg,
             next_addr => next_addr,
@@ -161,10 +167,14 @@ architecture a_processador of processador is
             data_out => acu_out
         );
 
+        uut_stateMachine : stateMachine port map(
+            clk => clk,
+            rst => rst,
+            state => state
+        );
         
         clk_fetch <= clk when state = "00" else '0';
-        clk_decode <= clk when state = "01" else '0';
-        clk_exec <= clk when state = "10" else '0';
+        clk_exec <= not clk when state = "01" else '0';
 
         writeData <= acu_out when RB_src = '0' else ext_imm;
         acu_in <= ext_imm when acu_src = "10" else

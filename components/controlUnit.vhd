@@ -11,7 +11,7 @@ entity controlUnit is
         RB_src      : out std_logic;                -- Controle de entrada do banco de registradores
         ula_op      : out unsigned(1 downto 0);     -- Operação da ULA
         acu_src     : out unsigned(1 downto 0);     -- Entrada do acumulador
-        state_out   : out unsigned(1 downto 0);     -- Estado atual do state machine
+        state_in    : in unsigned(1 downto 0);     -- Estado atual do state machine
         wr_reg      : out unsigned(2 downto 0);     -- Registrador de escrita
         read_reg    : out unsigned(2 downto 0);     -- Registrador de leitura
         next_addr   : out unsigned(6 downto 0);     -- Próximo endereço
@@ -21,19 +21,10 @@ end entity controlUnit;
 
 architecture a_controlUnit of controlUnit is
 
-    component stateMachine is
-        port( clk,rst: in std_logic;
-              state: out unsigned(1 downto 0)
-        );
-     end component;
-
      signal opcode : unsigned(3 downto 0);
      signal imm : unsigned(8 downto 0);
-     signal state : unsigned(1 downto 0);
  
      begin
-        uut : stateMachine port map(clk, rst, state);
-
         opcode <= instruction(15 downto 12);
 
         imm <= instruction(8 downto 0);
@@ -53,10 +44,9 @@ architecture a_controlUnit of controlUnit is
                     "00" when opcode = "0101" or opcode = "0110" or opcode = "0111" else -- Entrada do acumulador é a saida da ULA
                     "11";
 
-        next_addr <= addr + 1 when state = "00" else -- atualização padrão do pc
-                     addr when state = "01" or state = "10" else
-                     imm(6 downto 0) when opcode = "1010" else        --JMPI
+        next_addr <= imm(6 downto 0) when opcode = "1010" else        --JMPI
                      addr + imm(6 downto 0) when opcode = "1011" else --JMP
+                     addr + 1 when state_in = "01" else -- atualização padrão do pc
                      addr;
         
         wr_reg <= instruction(11 downto 9) when opcode = "0010" or opcode = "0100" else
@@ -67,5 +57,4 @@ architecture a_controlUnit of controlUnit is
                                                   opcode = "1001" else
                     "000";
                     
-        state_out <= state;
 end architecture a_controlUnit;
