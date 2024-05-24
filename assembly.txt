@@ -1,3 +1,5 @@
+LAB 5
+
 A:  LI R3,5
 B:  LI R4,8
 C:  MOV A,R3
@@ -13,3 +15,19 @@ G:  MOV R3,A
 H:  JMPI 4
 I:  ADDI A,0
     MOV R3,A
+
+==================
+LAB 6
+
+A:  LI R3, 0
+B:  LI R4, 0
+C:  MOV A, R3
+    ADD A, R4
+    MOV R4, A
+D:  MOV A, R3
+    ADDI A, 1
+    MOV R3, A
+E:  LI A, 30
+    BLT A, R3, -7
+F:  MOV A, R4
+    MOV R5, A

@@ -4,12 +4,12 @@ use ieee.numeric_std.all;
 
 entity controlUnit is
     port(
-        clk, rst         : in std_logic;                 -- Clock
-        is_zero     : in std_logic;                 -- Zero flag
-        addr        : in unsigned(6 downto 0);      -- Endereço atual
-        instruction : in unsigned(15 downto 0);     -- Instrução atual
-        RB_src      : out std_logic;                -- Controle de entrada do banco de registradores
-        ula_op      : out unsigned(1 downto 0);     -- Operação da ULA
+        clk, rst        : in std_logic;                 -- Clock
+        is_zero, carry  : in std_logic;                 -- Zero flag
+        addr            : in unsigned(6 downto 0);      -- Endereço atual
+        instruction     : in unsigned(15 downto 0);     -- Instrução atual
+        RB_src, ula_src : out std_logic;                -- Controle de entrada do banco de registradores
+        ula_op          : out unsigned(1 downto 0);     -- Operação da ULA
         acu_src     : out unsigned(1 downto 0);     -- Entrada do acumulador
         state_in    : in unsigned(1 downto 0);     -- Estado atual do state machine
         wr_reg      : out unsigned(2 downto 0);     -- Registrador de escrita
@@ -23,17 +23,20 @@ architecture a_controlUnit of controlUnit is
 
      signal opcode : unsigned(3 downto 0);
      signal imm : unsigned(8 downto 0);
+     signal relative_addr : unsigned(7 downto 0);
  
      begin
         opcode <= instruction(15 downto 12);
 
         imm <= instruction(8 downto 0);
 
+        relative_addr <= ('0' & addr) + imm(7 downto 0);
+
         ext_imm <= "0000000" & imm when opcode = "1010" or imm(8) = '0' else
                    "1111111" & imm when imm(8) = '1';
         
         ula_op <= "00" when opcode = "0101" or opcode = "0110" else --ADD, ADDI
-                  "01" when opcode = "0111" or opcode = "1000" or opcode = "1001" else --SUB, CMP, JMP
+                  "01" when opcode = "0111" or opcode = "1000" or opcode = "1001" or opcode = "1011" else --SUB, CMP, BEQ, BLT
                   "11";
 
         RB_src <= '1' when opcode = "0100" else -- Entrada do banco de registradores é um immediate
@@ -43,10 +46,12 @@ architecture a_controlUnit of controlUnit is
                     "01" when opcode = "0001" else -- Entrada do acumulador é a saida do banco de registradores
                     "00" when opcode = "0101" or opcode = "0110" or opcode = "0111" else -- Entrada do acumulador é a saida da ULA
                     "11";
+        
+        ula_src <= '1' when opcode = "0110" else '0'; -- ULA recebe a saida do banco de registradores ou immediate
 
         next_addr <= imm(6 downto 0) when opcode = "1010" else        --JMPI
-                     addr + imm(6 downto 0) when opcode = "1011" else --JMP
-                     addr + 1 when state_in = "01" else -- atualização padrão do pc
+                     relative_addr(6 downto 0) when (opcode = "1011" and carry = '0') or (opcode = "1001" and is_zero = '1') else --BLT e BEQ
+                     addr + 1 when state_in = "10" else -- atualização padrão do pc
                      addr;
         
         wr_reg <= instruction(11 downto 9) when opcode = "0010" or opcode = "0100" else
@@ -54,7 +59,7 @@ architecture a_controlUnit of controlUnit is
         
         read_reg <= instruction(11 downto 9) when opcode = "0001" or opcode = "0101" or 
                                                   opcode = "0111" or opcode = "1000" or
-                                                  opcode = "1001" else
+                                                  opcode = "1001" or opcode = "1011" else
                     "000";
                     
 end architecture a_controlUnit;
