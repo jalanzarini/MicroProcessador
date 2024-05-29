@@ -9,8 +9,9 @@ ADD:    0101 sss xxxxxxxxx
 ADDI:   0110 aaa ccccccccc
 SUB:    0111 sss xxxxxxxxx
 CMP:    1000 sss xxxxxxxxx
-JMP:    1001 sss ccccccccc
-JMPI:   1010 xxx ccccccccc
+BEQ:    1001 sss xcccccccc
+JMPI:   1010 xxx xxccccccc
+BLT:    1011 sss xcccccccc
 
 
 onde: 
