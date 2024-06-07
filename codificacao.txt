@@ -9,10 +9,11 @@ ADD:    0101 sss xxxxxxxxx
 ADDI:   0110 aaa ccccccccc
 SUB:    0111 sss xxxxxxxxx
 CMP:    1000 sss xxxxxxxxx
-BEQ:    1001 sss xcccccccc
+BEQ:    1001 xxx xcccccccc
 JMPI:   1010 xxx xxccccccc
-BLT:    1011 sss xcccccccc
-
+BLT:    1011 xxx xcccccccc
+LW:     1100 ddd eee xxxxx
+SW:     1101 eee sss xxxxx
 
 onde: 
         a - acumulador
@@ -20,3 +21,4 @@ onde:
         s - fonte
         c - constante
         d - destino
+        e - endereco (via registrador)

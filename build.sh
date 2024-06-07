@@ -5,6 +5,7 @@ ghdl -a components/mux2x1.vhd
 ghdl -a components/mux8x1.vhd
 ghdl -a components/reg16bits.vhd
 ghdl -a components/wr_en_demux.vhd
+ghdl -a components/flipflop.vhd
 
 ghdl -a components/stateMachine.vhd
 ghdl -a components/controlUnit.vhd
@@ -16,6 +17,7 @@ ghdl -a components/registerBank.vhd
 #ghdl -a components/lab4.vhd
 ghdl -a components/processador.vhd
 
+ghdl -e flipflop
 ghdl -e mux2x1
 ghdl -e mux8x1
 ghdl -e reg16bits

@@ -43,6 +43,12 @@ architecture a_processador of processador is
         );
     end component;
 
+    component flipflop is
+        port( clk ,rst, wr_en, data_in : in std_logic;
+              data_out : out std_logic
+        );
+    end component;
+
     component registerBank is
         port(
             clk, rst : in std_logic;                --Clock / Reset
@@ -68,7 +74,7 @@ architecture a_processador of processador is
             is_zero, carry  : in std_logic;                 -- Zero flag
             addr            : in unsigned(6 downto 0);      -- Endereço atual
             instruction     : in unsigned(15 downto 0);     -- Instrução atual
-            RB_src, ula_src : out std_logic;                -- Controle de entrada do banco de registradores
+            RB_src, ula_src, writeFlags : out std_logic;                -- Controle de entrada do banco de registradores
             ula_op          : out unsigned(1 downto 0);     -- Operação da ULA
             acu_src         : out unsigned(1 downto 0);     -- Entrada do acumulador
             state_in        : in unsigned(1 downto 0);     -- Estado atual do state machine
@@ -96,11 +102,26 @@ architecture a_processador of processador is
     signal ula_op, acu_src, state : unsigned(1 downto 0) := (others => '0');
     signal wr_reg, read_reg : unsigned(2 downto 0) := (others => '0');
     signal ext_imm : unsigned(15 downto 0) := (others => '0');
+    signal writeFlags, flagZero, flagCarry : std_logic;
 
     --Sinais de dados
     signal writeData, readData, acu_in, acu_out, ula_in, ula_out : unsigned(15 downto 0) := (others => '0');
-
     begin
+        zero_ff : flipflop port map(
+            clk => clk_exec,
+            rst => rst,
+            wr_en => writeFlags,
+            data_in => flagZero,
+            data_out => is_zero
+        );
+
+        carry_ff : flipflop port map(
+            clk => clk_exec,
+            rst => rst,
+            wr_en => writeFlags,
+            data_in => flagCarry,
+            data_out => carry
+        );
 
         uut_pc : programCounter port map(
             clk => clk_exec,
@@ -133,6 +154,7 @@ architecture a_processador of processador is
             instruction => instruction,
             RB_src => RB_src,
             ula_src => ula_src,
+            writeFlags => writeFlags,
             ula_op => ula_op,
             acu_src => acu_src,
             state_in => state,
@@ -156,8 +178,8 @@ architecture a_processador of processador is
             y => acu_out,
             op => ula_op,
             negative => open,
-            carry => carry,
-            zero => is_zero,
+            carry => flagCarry,
+            zero => flagZero,
             saida => ula_out
         );
 

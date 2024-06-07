@@ -1,4 +1,4 @@
-LAB 5
+LAB 5 - Calc Prog.
 
 A:  LI R3,5
 B:  LI R4,8
@@ -17,7 +17,7 @@ I:  ADDI A,0
     MOV R3,A
 
 ==================
-LAB 6
+LAB 6 - Condicionais
 
 A:  LI R3, 0
 B:  LI R4, 0
@@ -28,6 +28,10 @@ D:  MOV A, R3
     ADDI A, 1
     MOV R3, A
 E:  LI A, 30
-    BLT A, R3, -7
+    SUB A, R3
+    BLT -8
 F:  MOV A, R4
     MOV R5, A
+
+======================
+LAB 7 - RAM
