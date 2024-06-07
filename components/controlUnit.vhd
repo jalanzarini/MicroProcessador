@@ -8,7 +8,7 @@ entity controlUnit is
         is_zero, carry  : in std_logic;                 -- Zero flag
         addr            : in unsigned(6 downto 0);      -- Endereço atual
         instruction     : in unsigned(15 downto 0);     -- Instrução atual
-        RB_src, ula_src : out std_logic;                -- Controle de entrada do banco de registradores
+        RB_src, ula_src, writeFlags : out std_logic;                -- Controle de entrada do banco de registradores
         ula_op          : out unsigned(1 downto 0);     -- Operação da ULA
         acu_src     : out unsigned(1 downto 0);     -- Entrada do acumulador
         state_in    : in unsigned(1 downto 0);     -- Estado atual do state machine
@@ -50,7 +50,7 @@ architecture a_controlUnit of controlUnit is
         ula_src <= '1' when opcode = "0110" else '0'; -- ULA recebe a saida do banco de registradores ou immediate
 
         next_addr <= imm(6 downto 0) when opcode = "1010" else        --JMPI
-                     relative_addr(6 downto 0) when (opcode = "1011" and carry = '0') or (opcode = "1001" and is_zero = '1') else --BLT e BEQ
+                     relative_addr(6 downto 0) when (opcode = "1011" and carry = '0' and is_zero = '0') or (opcode = "1001" and is_zero = '1') else --BLT e BEQ
                      addr + 1 when state_in = "10" else -- atualização padrão do pc
                      addr;
         
@@ -61,5 +61,8 @@ architecture a_controlUnit of controlUnit is
                                                   opcode = "0111" or opcode = "1000" or
                                                   opcode = "1001" or opcode = "1011" else
                     "000";
+        
+        writeFlags <= '1' when opcode = "0101" or opcode = "0110" or opcode = "0111" or opcode = "1000" else
+                        '0';
                     
 end architecture a_controlUnit;
