@@ -9,7 +9,7 @@ entity registerBank is
         WriteReg     : in unsigned(2 downto 0);  --Selects the register to write
         ReadReg1     : in unsigned(2 downto 0);   --Selects the 1 register to read
         ReadReg2     : in unsigned(2 downto 0);   --Selects the 1 register to read
-        ReadData1    : out unsigned(15 downto 0)--Data read from the 1 register
+        ReadData1    : out unsigned(15 downto 0);--Data read from the 1 register
         ReadData2    : out unsigned(15 downto 0)--Data read from the 1 register
     );
 end entity registerBank;

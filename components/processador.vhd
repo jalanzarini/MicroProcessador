@@ -56,7 +56,7 @@ architecture a_processador of processador is
             WriteReg     : in unsigned(2 downto 0);  --Selects the register to write
             ReadReg1     : in unsigned(2 downto 0);   --Selects the 1 register to read
             ReadReg2     : in unsigned(2 downto 0);   --Selects the 1 register to read
-            ReadData1    : out unsigned(15 downto 0)--Data read from the 1 register
+            ReadData1    : out unsigned(15 downto 0);--Data read from the 1 register
             ReadData2    : out unsigned(15 downto 0)--Data read from the 1 register
         );
     end component registerBank;
@@ -76,13 +76,15 @@ architecture a_processador of processador is
             is_zero, carry  : in std_logic;                 -- Zero flag
             addr            : in unsigned(6 downto 0);      -- Endereço atual
             instruction     : in unsigned(15 downto 0);     -- Instrução atual
-            RB_src, ula_src, writeFlags : out std_logic;                -- Controle de entrada do banco de registradores
+            RB_src, ula_src : out std_logic;                -- Controle de entrada do banco de registradores
+            writeFlags      : out std_logic;                
+            ram_wr_en       : out std_logic;                -- Habilita escrita na RAM
             ula_op          : out unsigned(1 downto 0);     -- Operação da ULA
             acu_src         : out unsigned(1 downto 0);     -- Entrada do acumulador
             state_in        : in unsigned(1 downto 0);     -- Estado atual do state machine
             wr_reg          : out unsigned(2 downto 0);     -- Registrador de escrita
-            read_reg1        : out unsigned(2 downto 0);     -- Registrador de leitura
-            read_reg2        : out unsigned(2 downto 0);     -- Registrador de leitura
+            read_reg1       : out unsigned(2 downto 0);     -- Registrador de leitura
+            read_reg2       : out unsigned(2 downto 0);     -- Registrador de leitura
             next_addr       : out unsigned(6 downto 0);     -- Próximo endereço
             ext_imm         : out unsigned(15 downto 0)    -- Immediate extendido 
         );
@@ -115,10 +117,11 @@ architecture a_processador of processador is
     signal ula_op, acu_src, state : unsigned(1 downto 0) := (others => '0');
     signal wr_reg, read_reg1, read_reg2 : unsigned(2 downto 0) := (others => '0');
     signal ext_imm : unsigned(15 downto 0) := (others => '0');
-    signal writeFlags, flagZero, flagCarry : std_logic;
+    signal writeFlags, flagZero, flagCarry , ram_wr_en: std_logic;
 
     --Sinais de dados
-    signal writeData, readData, acu_in, acu_out, ula_in, ula_out : unsigned(15 downto 0) := (others => '0');
+    signal writeData, readData1, readData2, acu_in: unsigned(15 downto 0) := (others => '0');
+    signal acu_out, ula_in, ula_out, ram_out : unsigned(15 downto 0) := (others => '0');
     begin
         zero_ff : flipflop port map(
             clk => clk_exec,
@@ -168,11 +171,12 @@ architecture a_processador of processador is
             RB_src => RB_src,
             ula_src => ula_src,
             writeFlags => writeFlags,
+            ram_wr_en => ram_wr_en,
             ula_op => ula_op,
             acu_src => acu_src,
             state_in => state,
             wr_reg => wr_reg,
-            read_reg => read_reg1,
+            read_reg1 => read_reg1,
             read_reg2 => read_reg2,
             next_addr => next_addr,
             ext_imm => ext_imm
@@ -185,7 +189,7 @@ architecture a_processador of processador is
             ReadData1 => readData1,
             ReadData2 => readData2,
             WriteReg => wr_reg,
-            ReadReg1 => read_reg1
+            ReadReg1 => read_reg1,
             ReadReg2 => read_reg2
 
         );
@@ -216,9 +220,9 @@ architecture a_processador of processador is
 
         uut_ram : ram port map(
             clk => clk_exec,
-            endereco => readData1,
-            wr_en => '1',
-            dado_in => readData2,
+            endereco => readData2(6 downto 0),
+            wr_en => ram_wr_en,
+            dado_in => readData1,
             dado_out => ram_out
         );
         
@@ -228,13 +232,13 @@ architecture a_processador of processador is
 
         writeData <= acu_out when RB_src = '0' else ext_imm;
         acu_in <= ext_imm when acu_src = "10" else
-                  readData when acu_src = "01" else
+                  readData1 when acu_src = "01" else
                   ula_out when acu_src = "00" else
                   acu_out;
-        ula_in <= readData when ula_src = '0' else ext_imm;
+        ula_in <= readData1 when ula_src = '0' else ext_imm;
             
         ula_result <= ula_out;
-        reg <= readData;
+        reg <= readData1;
         acu_output <= acu_out;
         pc <= addr;
         inst <= instruction;

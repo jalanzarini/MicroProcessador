@@ -8,15 +8,17 @@ entity controlUnit is
         is_zero, carry  : in std_logic;                 -- Zero flag
         addr            : in unsigned(6 downto 0);      -- Endereço atual
         instruction     : in unsigned(15 downto 0);     -- Instrução atual
-        RB_src, ula_src, writeFlags : out std_logic;                -- Controle de entrada do banco de registradores
+        RB_src, ula_src : out std_logic;                -- Controle de entrada do banco de registradores
+        writeFlags      : out std_logic;
+        ram_wr_en       : out std_logic;                -- Habilita escrita na RAM
         ula_op          : out unsigned(1 downto 0);     -- Operação da ULA
-        acu_src     : out unsigned(1 downto 0);     -- Entrada do acumulador
-        state_in    : in unsigned(1 downto 0);     -- Estado atual do state machine
-        wr_reg      : out unsigned(2 downto 0);     -- Registrador de escrita
-        read_reg1    : out unsigned(2 downto 0);     -- Registrador de leitura
-        read_reg2    : out unsigned(2 downto 0);     -- Registrador de leitura
-        next_addr   : out unsigned(6 downto 0);     -- Próximo endereço
-        ext_imm     : out unsigned(15 downto 0)    -- Immediate extendido 
+        acu_src         : out unsigned(1 downto 0);     -- Entrada do acumulador
+        state_in        : in unsigned(1 downto 0);     -- Estado atual do state machine
+        wr_reg          : out unsigned(2 downto 0);     -- Registrador de escrita
+        read_reg1       : out unsigned(2 downto 0);     -- Registrador de leitura
+        read_reg2       : out unsigned(2 downto 0);     -- Registrador de leitura
+        next_addr       : out unsigned(6 downto 0);     -- Próximo endereço
+        ext_imm         : out unsigned(15 downto 0)    -- Immediate extendido 
     );
 end entity controlUnit;
 
@@ -55,15 +57,20 @@ architecture a_controlUnit of controlUnit is
                      addr + 1 when state_in = "10" else -- atualização padrão do pc
                      addr;
         
-        wr_reg <= instruction(11 downto 9) when opcode = "0010" or opcode = "0100" else
-                    "000";
+        wr_reg <= instruction(11 downto 9) when opcode = "0010" or opcode = "0100" or
+                                                opcode = "1100" else "000";
         
         read_reg1 <= instruction(11 downto 9) when opcode = "0001" or opcode = "0101" or 
-                                                  opcode = "0111" or opcode = "1000" or
-                                                  opcode = "1001" or opcode = "1011" else
-                    "000";
+                                                   opcode = "0111" or opcode = "1000" or
+                                                   opcode = "1001" or opcode = "1011" or
+                                                   opcode = "1101" else "000";
+        
+        read_reg2 <= instruction(8 downto 6) when opcode = "1100" or opcode = "1101" else -- endereço da ram
+                                                  "000";
         
         writeFlags <= '1' when opcode = "0101" or opcode = "0110" or opcode = "0111" or opcode = "1000" else
                         '0';
+        ram_wr_en <= '1' when opcode = "1101" else
+                     '0';
                     
 end architecture a_controlUnit;
