@@ -4,11 +4,13 @@ use ieee.numeric_std.all;
 
 entity registerBank is
     port(
-        clk, rst    : in std_logic;             --Clock / Reset
-        WriteData   : in unsigned(15 downto 0); --Data to be written in the selected register
-        WriteReg    : in unsigned(2 downto 0);  --Selects the register to write
-        ReadReg     : in unsigned(2 downto 0);   --Selects the 1 register to read
-        ReadData    : out unsigned(15 downto 0)--Data read from the 1 register
+        clk, rst     : in std_logic;             --Clock / Reset
+        WriteData    : in unsigned(15 downto 0); --Data to be written in the selected register
+        WriteReg     : in unsigned(2 downto 0);  --Selects the register to write
+        ReadReg1     : in unsigned(2 downto 0);   --Selects the 1 register to read
+        ReadReg2     : in unsigned(2 downto 0);   --Selects the 1 register to read
+        ReadData1    : out unsigned(15 downto 0)--Data read from the 1 register
+        ReadData2    : out unsigned(15 downto 0)--Data read from the 1 register
     );
 end entity registerBank;
 
@@ -35,14 +37,24 @@ architecture a_registerBank of registerBank is
         reg6 : reg16bits port map (clk => clk, rst => rst, wr_en => wr_en6, data_in => WriteData, data_out => data_out6);
         reg7 : reg16bits port map (clk => clk, rst => rst, wr_en => wr_en7, data_in => WriteData, data_out => data_out7);
 
-        readData <= data_out1 when ReadReg = "001" else
-                    data_out2 when ReadReg = "010" else
-                    data_out3 when ReadReg = "011" else
-                    data_out4 when ReadReg = "100" else
-                    data_out5 when ReadReg = "101" else
-                    data_out6 when ReadReg = "110" else
-                    data_out7 when ReadReg = "111" else
-                    "0000000000000000" when ReadReg = "000" else
+        readData1 <= data_out1 when ReadReg1 = "001" else
+                     data_out2 when ReadReg1 = "010" else
+                     data_out3 when ReadReg1 = "011" else
+                     data_out4 when ReadReg1 = "100" else
+                     data_out5 when ReadReg1 = "101" else
+                     data_out6 when ReadReg1 = "110" else
+                     data_out7 when ReadReg1 = "111" else
+                    "0000000000000000" when ReadReg1 = "000" else
+                    "0000000000000000";
+        
+        readData2 <= data_out1 when ReadReg2 = "001" else
+                     data_out2 when ReadReg2 = "010" else
+                     data_out3 when ReadReg2 = "011" else
+                     data_out4 when ReadReg2 = "100" else
+                     data_out5 when ReadReg2 = "101" else
+                     data_out6 when ReadReg2 = "110" else
+                     data_out7 when ReadReg2 = "111" else
+                    "0000000000000000" when ReadReg2 = "000" else
                     "0000000000000000";
 
         wr_en0 <= '0';

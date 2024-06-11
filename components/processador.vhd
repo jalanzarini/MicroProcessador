@@ -51,11 +51,13 @@ architecture a_processador of processador is
 
     component registerBank is
         port(
-            clk, rst : in std_logic;                --Clock / Reset
-            WriteData : in unsigned(15 downto 0);   --Data to be written in the selected register
-            ReadData : out unsigned(15 downto 0);   --Data read from the 1 register
-            WriteReg : in unsigned(2 downto 0);     --Selects the register to write
-            ReadReg : in unsigned(2 downto 0)       --Selects the 1 register to read
+            clk, rst     : in std_logic;             --Clock / Reset
+            WriteData    : in unsigned(15 downto 0); --Data to be written in the selected register
+            WriteReg     : in unsigned(2 downto 0);  --Selects the register to write
+            ReadReg1     : in unsigned(2 downto 0);   --Selects the 1 register to read
+            ReadReg2     : in unsigned(2 downto 0);   --Selects the 1 register to read
+            ReadData1    : out unsigned(15 downto 0)--Data read from the 1 register
+            ReadData2    : out unsigned(15 downto 0)--Data read from the 1 register
         );
     end component registerBank;
 
@@ -79,7 +81,8 @@ architecture a_processador of processador is
             acu_src         : out unsigned(1 downto 0);     -- Entrada do acumulador
             state_in        : in unsigned(1 downto 0);     -- Estado atual do state machine
             wr_reg          : out unsigned(2 downto 0);     -- Registrador de escrita
-            read_reg        : out unsigned(2 downto 0);     -- Registrador de leitura
+            read_reg1        : out unsigned(2 downto 0);     -- Registrador de leitura
+            read_reg2        : out unsigned(2 downto 0);     -- Registrador de leitura
             next_addr       : out unsigned(6 downto 0);     -- Próximo endereço
             ext_imm         : out unsigned(15 downto 0)    -- Immediate extendido 
         );
@@ -90,6 +93,16 @@ architecture a_processador of processador is
               state: out unsigned(1 downto 0)
         );
      end component;
+    
+    component ram is
+        port( 
+            clk      : in std_logic;
+            endereco : in unsigned(6 downto 0);
+            wr_en    : in std_logic;
+            dado_in  : in unsigned(15 downto 0);
+            dado_out : out unsigned(15 downto 0) 
+      );
+    end component ram;
 
     signal clk_fetch, clk_decode, clk_exec : std_logic := '0';
     
@@ -100,7 +113,7 @@ architecture a_processador of processador is
     --Sinais de controle
     signal RB_src, ula_src, is_zero, carry : std_logic := '0';
     signal ula_op, acu_src, state : unsigned(1 downto 0) := (others => '0');
-    signal wr_reg, read_reg : unsigned(2 downto 0) := (others => '0');
+    signal wr_reg, read_reg1, read_reg2 : unsigned(2 downto 0) := (others => '0');
     signal ext_imm : unsigned(15 downto 0) := (others => '0');
     signal writeFlags, flagZero, flagCarry : std_logic;
 
@@ -159,7 +172,8 @@ architecture a_processador of processador is
             acu_src => acu_src,
             state_in => state,
             wr_reg => wr_reg,
-            read_reg => read_reg,
+            read_reg => read_reg1,
+            read_reg2 => read_reg2,
             next_addr => next_addr,
             ext_imm => ext_imm
         );
@@ -168,9 +182,12 @@ architecture a_processador of processador is
             clk => clk_exec,
             rst => rst,
             WriteData => writeData,
-            ReadData => readData,
+            ReadData1 => readData1,
+            ReadData2 => readData2,
             WriteReg => wr_reg,
-            ReadReg => read_reg
+            ReadReg1 => read_reg1
+            ReadReg2 => read_reg2
+
         );
 
         uut_ula : ula port map(
@@ -195,6 +212,14 @@ architecture a_processador of processador is
             clk => clk,
             rst => rst,
             state => state
+        );
+
+        uut_ram : ram port map(
+            clk => clk_exec,
+            endereco => readData1,
+            wr_en => '1',
+            dado_in => readData2,
+            dado_out => ram_out
         );
         
         clk_fetch <= '1' when state = "00" else '0';

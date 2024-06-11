@@ -13,7 +13,8 @@ entity controlUnit is
         acu_src     : out unsigned(1 downto 0);     -- Entrada do acumulador
         state_in    : in unsigned(1 downto 0);     -- Estado atual do state machine
         wr_reg      : out unsigned(2 downto 0);     -- Registrador de escrita
-        read_reg    : out unsigned(2 downto 0);     -- Registrador de leitura
+        read_reg1    : out unsigned(2 downto 0);     -- Registrador de leitura
+        read_reg2    : out unsigned(2 downto 0);     -- Registrador de leitura
         next_addr   : out unsigned(6 downto 0);     -- Próximo endereço
         ext_imm     : out unsigned(15 downto 0)    -- Immediate extendido 
     );
@@ -57,7 +58,7 @@ architecture a_controlUnit of controlUnit is
         wr_reg <= instruction(11 downto 9) when opcode = "0010" or opcode = "0100" else
                     "000";
         
-        read_reg <= instruction(11 downto 9) when opcode = "0001" or opcode = "0101" or 
+        read_reg1 <= instruction(11 downto 9) when opcode = "0001" or opcode = "0101" or 
                                                   opcode = "0111" or opcode = "1000" or
                                                   opcode = "1001" or opcode = "1011" else
                     "000";
