@@ -11,6 +11,7 @@ entity controlUnit is
         RB_src, ula_src : out std_logic;                -- Controle de entrada do banco de registradores
         writeFlags      : out std_logic;
         ram_wr_en       : out std_logic;                -- Habilita escrita na RAM
+        ram_src         : out std_logic;                -- Define a RAM como entrada do banco de registradores
         ula_op          : out unsigned(1 downto 0);     -- Operação da ULA
         acu_src         : out unsigned(1 downto 0);     -- Entrada do acumulador
         state_in        : in unsigned(1 downto 0);     -- Estado atual do state machine
@@ -72,5 +73,7 @@ architecture a_controlUnit of controlUnit is
                         '0';
         ram_wr_en <= '1' when opcode = "1101" else
                      '0';
+        ram_src <= '1' when opcode = "1100" else
+                   '0';
                     
 end architecture a_controlUnit;

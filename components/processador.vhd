@@ -79,6 +79,7 @@ architecture a_processador of processador is
             RB_src, ula_src : out std_logic;                -- Controle de entrada do banco de registradores
             writeFlags      : out std_logic;                
             ram_wr_en       : out std_logic;                -- Habilita escrita na RAM
+            ram_src         : out std_logic;                -- Define a RAM como entrada do banco de registradores
             ula_op          : out unsigned(1 downto 0);     -- Operação da ULA
             acu_src         : out unsigned(1 downto 0);     -- Entrada do acumulador
             state_in        : in unsigned(1 downto 0);     -- Estado atual do state machine
@@ -117,7 +118,7 @@ architecture a_processador of processador is
     signal ula_op, acu_src, state : unsigned(1 downto 0) := (others => '0');
     signal wr_reg, read_reg1, read_reg2 : unsigned(2 downto 0) := (others => '0');
     signal ext_imm : unsigned(15 downto 0) := (others => '0');
-    signal writeFlags, flagZero, flagCarry , ram_wr_en: std_logic;
+    signal writeFlags, flagZero, flagCarry , ram_wr_en, ram_src: std_logic;
 
     --Sinais de dados
     signal writeData, readData1, readData2, acu_in: unsigned(15 downto 0) := (others => '0');
@@ -172,6 +173,7 @@ architecture a_processador of processador is
             ula_src => ula_src,
             writeFlags => writeFlags,
             ram_wr_en => ram_wr_en,
+            ram_src => ram_src,
             ula_op => ula_op,
             acu_src => acu_src,
             state_in => state,
@@ -230,7 +232,9 @@ architecture a_processador of processador is
         clk_decode <= '1' when state = "01" else '0';
         clk_exec <= '1' when state = "10" else '0';
 
-        writeData <= acu_out when RB_src = '0' else ext_imm;
+        writeData <= ram_out when ram_src = '1' else
+                     acu_out when RB_src = '0' else
+                     ext_imm;
         acu_in <= ext_imm when acu_src = "10" else
                   readData1 when acu_src = "01" else
                   ula_out when acu_src = "00" else

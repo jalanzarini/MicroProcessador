@@ -35,3 +35,7 @@ F:  MOV A, R4
 
 ======================
 LAB 7 - RAM
+A:  LI R3, 0x1E
+B:  LI R2, 7
+C:  SW R2, R3
+D:  LW R1, R3

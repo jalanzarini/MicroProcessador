@@ -11,6 +11,8 @@ ghdl -a components/stateMachine.vhd
 ghdl -a components/controlUnit.vhd
 ghdl -a components/programCounter.vhd
 ghdl -a components/rom.vhd
+ghdl -a components/ram.vhd
+
 
 ghdl -a components/ula.vhd
 ghdl -a components/registerBank.vhd
@@ -27,6 +29,8 @@ ghdl -e stateMachine
 ghdl -e controlUnit
 ghdl -e programCounter
 ghdl -e rom
+ghdl -e ram
+
 
 ghdl -e ula
 ghdl -e registerBank
