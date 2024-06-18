@@ -39,3 +39,23 @@ A:  LI R3, 0x1E
 B:  LI R2, 7
 C:  SW R2, R3
 D:  LW R1, R3
+
+LAB 7 - Crivo
+        LI R1, 0
+load    SW R1, R1
+        ADDI R1, 1
+        MOV R1, A -- do acumulador pra R1
+        SUB R1, 33
+        BLT load
+        
+        LI R2, 2
+        LI R3, R2
+        LW R4, R2
+        SUB R4, 0
+        BEQ naoPrimo
+        
+        SW R0, R2
+        ADD R2, R3
+        MOV R2, a
+        
+
