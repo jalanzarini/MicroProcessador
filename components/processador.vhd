@@ -76,7 +76,7 @@ architecture a_processador of processador is
             is_zero, carry  : in std_logic;                 -- Zero flag
             addr            : in unsigned(6 downto 0);      -- Endereço atual
             instruction     : in unsigned(15 downto 0);     -- Instrução atual
-            RB_src, ula_src : out std_logic;                -- Controle de entrada do banco de registradores
+            RB_src, ula_src_1, ula_src_2 : out std_logic;                -- Controle de entrada do banco de registradores
             writeFlags      : out std_logic;                
             ram_wr_en       : out std_logic;                -- Habilita escrita na RAM
             ram_src         : out std_logic;                -- Define a RAM como entrada do banco de registradores
@@ -107,14 +107,14 @@ architecture a_processador of processador is
       );
     end component ram;
 
-    signal clk_fetch, clk_decode, clk_exec : std_logic := '0';
+    signal clk_fetch, clk_decode, clk_flag, clk_exec : std_logic := '0';
     
     --Sinais de instrução
     signal addr, next_addr : unsigned(6 downto 0) := (others => '0');
     signal instruction, rom_data : unsigned(15 downto 0) := (others => '0');
 
     --Sinais de controle
-    signal RB_src, ula_src, is_zero, carry : std_logic := '0';
+    signal RB_src, ula_src_1, ula_src_2, is_zero, carry : std_logic := '0';
     signal ula_op, acu_src, state : unsigned(1 downto 0) := (others => '0');
     signal wr_reg, read_reg1, read_reg2 : unsigned(2 downto 0) := (others => '0');
     signal ext_imm : unsigned(15 downto 0) := (others => '0');
@@ -122,10 +122,10 @@ architecture a_processador of processador is
 
     --Sinais de dados
     signal writeData, readData1, readData2, acu_in: unsigned(15 downto 0) := (others => '0');
-    signal acu_out, ula_in, ula_out, ram_out : unsigned(15 downto 0) := (others => '0');
+    signal acu_out, ula_in_1, ula_in_2, ula_out, ram_out : unsigned(15 downto 0) := (others => '0');
     begin
         zero_ff : flipflop port map(
-            clk => clk_exec,
+            clk => clk_flag,
             rst => rst,
             wr_en => writeFlags,
             data_in => flagZero,
@@ -133,7 +133,7 @@ architecture a_processador of processador is
         );
 
         carry_ff : flipflop port map(
-            clk => clk_exec,
+            clk => clk_flag,
             rst => rst,
             wr_en => writeFlags,
             data_in => flagCarry,
@@ -170,7 +170,8 @@ architecture a_processador of processador is
             addr => addr,
             instruction => instruction,
             RB_src => RB_src,
-            ula_src => ula_src,
+            ula_src_1 => ula_src_1,
+            ula_src_2 => ula_src_2,
             writeFlags => writeFlags,
             ram_wr_en => ram_wr_en,
             ram_src => ram_src,
@@ -197,8 +198,8 @@ architecture a_processador of processador is
         );
 
         uut_ula : ula port map(
-            x => ula_in,
-            y => acu_out,
+            x => ula_in_1,
+            y => ula_in_2,
             op => ula_op,
             negative => open,
             carry => flagCarry,
@@ -230,7 +231,8 @@ architecture a_processador of processador is
         
         clk_fetch <= '1' when state = "00" else '0';
         clk_decode <= '1' when state = "01" else '0';
-        clk_exec <= '1' when state = "10" else '0';
+        clk_flag <= '1' when state = "10" else '0';
+        clk_exec <= '1' when state = "11" else '0';
 
         writeData <= ram_out when ram_src = '1' else
                      acu_out when RB_src = '0' else
@@ -239,8 +241,10 @@ architecture a_processador of processador is
                   readData1 when acu_src = "01" else
                   ula_out when acu_src = "00" else
                   acu_out;
-        ula_in <= readData1 when ula_src = '0' else ext_imm;
-            
+        ula_in_1 <= readData1 when ula_src_1 = '0' else ext_imm;
+        
+        ula_in_2 <= readData2 when ula_src_2 = '1' else acu_out;
+
         ula_result <= ula_out;
         reg <= readData1;
         acu_output <= acu_out;

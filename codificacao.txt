@@ -11,9 +11,10 @@ SUB:    0111 sss xxxxxxxxx
 CMP:    1000 sss xxxxxxxxx
 BEQ:    1001 xxx xcccccccc
 JMPI:   1010 xxx xxccccccc
-BLT:    1011 xxx xcccccccc
+BLE:    1011 xxx xcccccccc
 LW:     1100 ddd eee xxxxx
 SW:     1101 sss eee xxxxx
+CJNE:   1110 rrr RRR cccccc
 
 onde: 
         a - acumulador

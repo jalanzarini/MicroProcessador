@@ -16,7 +16,7 @@ entity stateMachine is
        if rst='1' then
           estado_s <= "00";
        elsif rising_edge(clk) then
-            if estado_s = "10" then
+            if estado_s = "11" then
              estado_s <= "00";
             else
                estado_s <= estado_s + 1;
