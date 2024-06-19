@@ -25,7 +25,7 @@ architecture a_registerBank of registerBank is
     end component;
 
     signal wr_en0, wr_en1, wr_en2, wr_en3, wr_en4, wr_en5, wr_en6, wr_en7 : std_logic;
-    signal data_out0, data_out1, data_out2, data_out3, data_out4, data_out5, data_out6, data_out7 : unsigned(15 downto 0);
+    signal data_out0, data_out1, data_out2, data_out3, data_out4, data_out5, data_out6, data_out7 : unsigned(15 downto 0) := "0000000000000000";
 
     begin
         reg0 : reg16bits port map (clk => clk, rst => rst, wr_en => wr_en0, data_in => WriteData); -- não tem saida

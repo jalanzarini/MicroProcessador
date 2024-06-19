@@ -39,3 +39,65 @@ A:  LI R3, 0x1E
 B:  LI R2, 7
 C:  SW R2, R3
 D:  LW R1, R3
+
+======================
+Validação
+
+Nota: Adicionar data_out5 presente no uut_rb à waveform para facilitar a vizualização dos primos
+
+--Inicializa variáveis
+LI R3, 32
+LI R4, 0
+LI R1, 0
+
+--Loop inicializa memória
+MOV A, R1
+ADDI A, 1
+MOV R1, A
+SW R1, (R1)
+CJNE R1, R3, 3
+--End Loop
+
+--Loop externo Crivo
+LI R1, 1
+MOV A, R1
+ADDI A, 1
+MOV R1, A
+
+CMP A, R3 --Verifica se i = 32
+BEQ 17
+
+LW R5, (R1) --Verifica se o valor na posição i é igual a zero
+LI A, 0
+SUB A, R5
+BEQ -8
+
+MOV A, R1
+MOV R2, A
+
+--Loop interno Crivo
+MOV A, R2
+ADD A, R1
+MOV R2, A
+SW R4, (R2)
+MOV A, R3
+SUB A, R2
+BLE -6
+--End loop interno
+
+MOV A, R3
+SUB A, R1
+BLE -20
+--End loop externo
+
+--Loop leitura
+LI R1, 1
+MOV A, R1
+ADDI A, 1
+MOV R1, A
+LW R5, (R1)
+MOV A, R5 #Leitura
+CJNE R1, R3, 31
+--End loop leitura
+
+JMPI 40

@@ -110,7 +110,7 @@ architecture a_processador of processador is
     signal clk_fetch, clk_decode, clk_flag, clk_exec : std_logic := '0';
     
     --Sinais de instrução
-    signal addr, next_addr : unsigned(6 downto 0) := (others => '0');
+    signal addr, next_addr, ram_in : unsigned(6 downto 0) := (others => '0');
     signal instruction, rom_data : unsigned(15 downto 0) := (others => '0');
 
     --Sinais de controle
@@ -223,7 +223,7 @@ architecture a_processador of processador is
 
         uut_ram : ram port map(
             clk => clk_exec,
-            endereco => readData2(6 downto 0),
+            endereco => ram_in,
             wr_en => ram_wr_en,
             dado_in => readData1,
             dado_out => ram_out
@@ -244,6 +244,8 @@ architecture a_processador of processador is
         ula_in_1 <= readData1 when ula_src_1 = '0' else ext_imm;
         
         ula_in_2 <= readData2 when ula_src_2 = '1' else acu_out;
+
+        ram_in <= readData2(6 downto 0) when instruction(15 downto 12) = "1100" or instruction(15 downto 12) = "1101" else "0000000";
 
         ula_result <= ula_out;
         reg <= readData1;
